@@ -86,11 +86,11 @@ end
 #    1. Run simulations in Julia
 #    2. Export simulation results to .txt file
 #    3. Import results from .txt file into MATLAB
-#    4. Perform statistical analysis within MATLAB
+#    4. Perform statistical analysis and plotting within MATLAB
 #
 # The code may, in the future, be updated to use Julia entirely. However, the code below shows
 # steps 1 and 2 of the above workflow; while step 3 is performed by importer.m, and step 4
-# is performed by ____.m
+# is performed by runner.m and stats_plotter.m
 #
 
 probLorenz = ODEProblem(lorenz, u0Lorenz, (0, 300), p)
@@ -99,17 +99,17 @@ h = [0.32, 0.16, 0.08, 0.04, 0.02, 0.01, 0.005, 0.0025]
 for i = h
     # GLRK stable for all step sizes
     solGLRK = solve(probLorenz, alg=GIGLRK(4), dt=i)
-    writedlm("Method Solutions\\GLRK(4)_u_"*string(i)*".txt", solGLRK.u)
+    writedlm("lorenz\\Simulated Solutions\\GLRK(4)_u_"*string(i)*".txt", solGLRK.u)
 
     # Explicit RK4 stable for h < 0.32
     if i < 0.32
         solRK4 = solve(probLorenz, alg=GIERK4(), dt=i)
-        writedlm("Method Solutions\\RK4_u_"*string(i)*".txt", solRK4.u)
+        writedlm("lorenz\\Simulated Solutions\\RK4_u_"*string(i)*".txt", solRK4.u)
     end
 
     # Heun's method stable for h < 0.08
     if i < 0.08
         solHeun = solve(probLorenz, alg=GIHeun(), dt=i)
-        writedlm("Method Solutions\\Heun_u_"*string(i)*".txt", solHeun.u)
+        writedlm("lorenz\\Simulated Solutions\\Heun_u_"*string(i)*".txt", solHeun.u)
     end
 end

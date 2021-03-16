@@ -5,46 +5,47 @@ Z_true = sym("23.484682069515607552450571020258859790199647367651019247070737175
 
 %% Import all solution data
 
-% Ensure NewtonCotes rules are on MATLAB path
+% Ensure NewtonCotes rules and importer function are on MATLAB path
 path(path, replace(pwd, 'lorenz', 'NewtonCotes'))
+path(path, replace(pwd, 'lorenz', 'utils'))
 
 % GLRK data
-z_GLRK_0_0025 = importer_lorenz('Simulated Solutions\GLRK(4)_u_0.0025.txt');
-z_GLRK_0_005 = importer_lorenz('Simulated Solutions\GLRK(4)_u_0.005.txt');
-z_GLRK_0_01 = importer_lorenz('Simulated Solutions\GLRK(4)_u_0.01.txt');
-z_GLRK_0_02 = importer_lorenz('Simulated Solutions\GLRK(4)_u_0.02.txt');
-z_GLRK_0_04 = importer_lorenz('Simulated Solutions\GLRK(4)_u_0.04.txt');
-z_GLRK_0_08 = importer_lorenz('Simulated Solutions\GLRK(4)_u_0.08.txt');
-z_GLRK_0_16 = importer_lorenz('Simulated Solutions\GLRK(4)_u_0.16.txt');
-z_GLRK_0_32 = importer_lorenz('Simulated Solutions\GLRK(4)_u_0.32.txt');
+z_GLRK_0_0025 = solution_importer('Simulated Solutions\GLRK(4)_u_0.0025.txt');
+z_GLRK_0_005 = solution_importer('Simulated Solutions\GLRK(4)_u_0.005.txt');
+z_GLRK_0_01 = solution_importer('Simulated Solutions\GLRK(4)_u_0.01.txt');
+z_GLRK_0_02 = solution_importer('Simulated Solutions\GLRK(4)_u_0.02.txt');
+z_GLRK_0_04 = solution_importer('Simulated Solutions\GLRK(4)_u_0.04.txt');
+z_GLRK_0_08 = solution_importer('Simulated Solutions\GLRK(4)_u_0.08.txt');
+z_GLRK_0_16 = solution_importer('Simulated Solutions\GLRK(4)_u_0.16.txt');
+z_GLRK_0_32 = solution_importer('Simulated Solutions\GLRK(4)_u_0.32.txt');
 
 % RK4 data
-z_RK4_0_0025 = importer_lorenz('Simulated Solutions\RK4_u_0.0025.txt');
-z_RK4_0_005 = importer_lorenz('Simulated Solutions\RK4_u_0.005.txt');
-z_RK4_0_01 = importer_lorenz('Simulated Solutions\RK4_u_0.01.txt');
-z_RK4_0_02 = importer_lorenz('Simulated Solutions\RK4_u_0.02.txt');
-z_RK4_0_04 = importer_lorenz('Simulated Solutions\RK4_u_0.04.txt');
-z_RK4_0_08 = importer_lorenz('Simulated Solutions\RK4_u_0.08.txt');
-z_RK4_0_16 = importer_lorenz('Simulated Solutions\RK4_u_0.16.txt');
+z_RK4_0_0025 = solution_importer('Simulated Solutions\RK4_u_0.0025.txt');
+z_RK4_0_005 = solution_importer('Simulated Solutions\RK4_u_0.005.txt');
+z_RK4_0_01 = solution_importer('Simulated Solutions\RK4_u_0.01.txt');
+z_RK4_0_02 = solution_importer('Simulated Solutions\RK4_u_0.02.txt');
+z_RK4_0_04 = solution_importer('Simulated Solutions\RK4_u_0.04.txt');
+z_RK4_0_08 = solution_importer('Simulated Solutions\RK4_u_0.08.txt');
+z_RK4_0_16 = solution_importer('Simulated Solutions\RK4_u_0.16.txt');
 
 % Heun's method data
-z_Heun_0_0025 = importer_lorenz('Simulated Solutions\Heun_u_0.0025.txt');
-z_Heun_0_005 = importer_lorenz('Simulated Solutions\Heun_u_0.005.txt');
-z_Heun_0_01 = importer_lorenz('Simulated Solutions\Heun_u_0.01.txt');
-z_Heun_0_02 = importer_lorenz('Simulated Solutions\Heun_u_0.02.txt');
-z_Heun_0_04 = importer_lorenz('Simulated Solutions\Heun_u_0.04.txt');
+z_Heun_0_0025 = solution_importer('Simulated Solutions\Heun_u_0.0025.txt');
+z_Heun_0_005 = solution_importer('Simulated Solutions\Heun_u_0.005.txt');
+z_Heun_0_01 = solution_importer('Simulated Solutions\Heun_u_0.01.txt');
+z_Heun_0_02 = solution_importer('Simulated Solutions\Heun_u_0.02.txt');
+z_Heun_0_04 = solution_importer('Simulated Solutions\Heun_u_0.04.txt');
 
 %% Run the method comparisons and build the stat matrices.
 
-run('Helper Scripts\method_comparisons_0_32.m')
-run('Helper Scripts\method_comparisons_0_16.m')
-run('Helper Scripts\method_comparisons_0_08.m')
-run('Helper Scripts\method_comparisons_0_04.m')
-run('Helper Scripts\method_comparisons_0_02.m')
-run('Helper Scripts\method_comparisons_0_01.m')
-run('Helper Scripts\method_comparisons_0_005.m')
-run('Helper Scripts\method_comparisons_0_0025.m')
-run('Helper Scripts\stats_matrix_lorenz.m')
+run('..\utils\method_comparisons_0_32.m')
+run('..\utils\method_comparisons_0_16.m')
+run('..\utils\method_comparisons_0_08.m')
+run('..\utils\method_comparisons_0_04_lorenz.m')
+run('..\utils\method_comparisons_0_02.m')
+run('..\utils\method_comparisons_0_01.m')
+run('..\utils\method_comparisons_0_005.m')
+run('..\utils\method_comparisons_0_0025.m')
+run('stats_matrix_lorenz.m')
 
 %% Cleanup
 digits(digitsOld);
