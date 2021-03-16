@@ -24,7 +24,7 @@ The following Julia files are contained in the `lorenz` directory:
 
 ### lorenz MATLAB data analysis and plotting scripts
 
-  * `runner.m`: helper script which imports all data produced by `lorenz.jl`, performs time-averaging on that data using the functions in 'utils' and 'NewtonCotes', and gathers all time-average statistics for each combination of solver method, step size, and integration period.
+  * `runner.m`: helper script which imports all data produced by `lorenz.jl`, performs time-averaging on that data using the functions in `utils` and `NewtonCotes`, and gathers all time-average statistics for each combination of solver method, step size, and integration period.
   * `stats_plotter_lorenz.m`: contains all code needed to produce plots of time-average error statistics when step size is held constant and integration period is varied, as well as when integration period is held constant and step size is varied.
 
 ## `chen`
@@ -39,7 +39,7 @@ The following Julia files are contained in the `chen` directory:
 
 ### chen MATLAB data analysis and plotting scripts
 
-  * `runner.m`: helper script which imports all data produced by `chen.jl`, performs time-averaging on that data using the functions in 'utils' and 'NewtonCotes', and gathers all time-average statistics for each combination of solver method, step size, and integration period.
+  * `runner.m`: helper script which imports all data produced by `chen.jl`, performs time-averaging on that data using the functions in `utils` and `NewtonCotes`, and gathers all time-average statistics for each combination of solver method, step size, and integration period.
   * `stats_plotter_chen.m`: contains all code needed to produce plots of time-average error statistics when step size is held constant and integration period is varied, as well as when integration period is held constant and step size is varied.
 
 ## `kuramoto-sivashinsky`
