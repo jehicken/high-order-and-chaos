@@ -77,7 +77,7 @@ Z_GLRK4s50_016 = [];
 
 for i = 1:312:1564
     
-    Z_GLRK4_0_016 = NewtonCotes13pt(z_GLRK_0_16(i:i+312), h)/49.92;
+    Z_GLRK4_0_016 = NewtonCotes7pt(z_GLRK_0_16(i:i+312), h)/49.92;
     
     GLRK4_err = (Z_GLRK4_0_016 - Z_true)/Z_true*100;
     
@@ -91,7 +91,7 @@ end
 title("Percent Error for GLRK 8^{th} Order Method, h = 0.16, T = 49.92")
 xlabel("t")
 ylabel("%Error from Z_{true}")
-ylim([-1.5 4])
+ylim([-3 3])
 
 grid on
 plot([0 300], [0 0], 'k--')

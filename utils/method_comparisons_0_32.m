@@ -56,10 +56,10 @@ for i = 1:31:907
     
 end
 
-title("Percent Error for GLRK 8^{th} Order Method, h = 0.32, T = 10.08")
+title("Percent Error for GLRK 8^{th} Order Method, h = 0.32, T = 9.92")
 xlabel("t")
 ylabel("%Error from Z_{true}")
-ylim([-3 7])
+ylim([-15 15])
 
 grid on
 plot([0 300], [0 0], 'k--')
@@ -76,8 +76,9 @@ t_exp = 0:h:300;
 Z_GLRK4s50_032 = [];
 
 for i = 1:156:782
-    
-    Z_GLRK4_0_032 = NewtonCotes13pt(z_GLRK_0_32(i:i+156), h)/49.92;
+    % Tried using 13pt rule, integration turned out highly unstable and
+    % produced values that didn't make sense. Have to use lower order rule.
+    Z_GLRK4_0_032 = NewtonCotes7pt(z_GLRK_0_32(i:i+156), h)/49.92;
     
     GLRK4_err = (Z_GLRK4_0_032 - Z_true)/Z_true*100;
     
@@ -91,7 +92,7 @@ end
 title("Percent Error for GLRK 8^{th} Order Method, h = 0.32, T = 49.92")
 xlabel("t")
 ylabel("%Error from Z_{true}")
-ylim([-1.5 4])
+ylim([-5 5])
 
 grid on
 plot([0 300], [0 0], 'k--')
