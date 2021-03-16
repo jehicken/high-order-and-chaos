@@ -45,7 +45,7 @@ run('..\utils\method_comparisons_0_02.m')
 run('..\utils\method_comparisons_0_01.m')
 run('..\utils\method_comparisons_0_005.m')
 run('..\utils\method_comparisons_0_0025.m')
-run('stats_matrix_lorenz.m')
+run('..\utils\stats_matrix_lorenz.m')
 
 %% Cleanup
 digits(digitsOld);

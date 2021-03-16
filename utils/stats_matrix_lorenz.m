@@ -1,6 +1,6 @@
 %% Stats matrix builder
 % Used for Lorenz system specifically with 8 step sizes:
-% 0.32, 0.16, 0.08, 0.04, 0.02, 0.01, 0.005, 0.0025
+% 0.32, 0.16, 0.08, 0.04, 0.04/2, 0.04/2^6, 0.04/2^7, 0.04/16
 % Different matrix for Chen system since methods unstable at different times
 %
 % For each combination of method, time-step, and integration period, we

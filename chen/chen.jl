@@ -57,6 +57,9 @@ u0Chen = sol.u[end] # = [10.747927627254173, 12.40061941590775,21.20730687602006
 
 # The same step sizes as determined for the Lorenz system are used.
 # No extra computation needed here.
+# However note that attempts to simulate with some larger step sizes revealed that
+# for the Chen system, GLRK and RK4 are only stable for step sizes up to 0.04,
+# and Heun's method is only stable up to 0.02.
 
 ## 3.4 Time-March Testing
 # NOTE: At time of initial investigation, the programmer was more experienced with MATLAB
@@ -72,21 +75,21 @@ u0Chen = sol.u[end] # = [10.747927627254173, 12.40061941590775,21.20730687602006
 # is performed by runner.m and stats_plotter.m
 #
 
-probChen = ODEProblem(lorenz, u0Lorenz, (0, 300), p)
+probChen = ODEProblem(chen, u0Chen, (0, 300), p)
 
 h = [0.04, 0.02, 0.01, 0.005, 0.0025]
 for i = h
     # GLRK stable for all step sizes
     solGLRK = solve(probChen, alg=GIGLRK(4), dt=i)
-    writedlm("Method Solutions\\GLRK(4)_u_"*string(i)*".txt", solGLRK.u)
+    writedlm("chen\\Simulated Solutions\\GLRK(4)_u_"*string(i)*".txt", solGLRK.u)
 
     # Explicit RK4 stable for all step sizes
     solRK4 = solve(probChen, alg=GIERK4(), dt=i)
-    writedlm("Method Solutions\\RK4_u_"*string(i)*".txt", solRK4.u)
+    writedlm("chen\\Simulated Solutions\\RK4_u_"*string(i)*".txt", solRK4.u)
 
     # Heun's method stable for h < 0.04
     if i < 0.04
         solHeun = solve(probChen, alg=GIHeun(), dt=i)
-        writedlm("Method Solutions\\Heun_u_"*string(i)*".txt", solHeun.u)
+        writedlm("chen\\Simulated Solutions\\Heun_u_"*string(i)*".txt", solHeun.u)
     end
 end
