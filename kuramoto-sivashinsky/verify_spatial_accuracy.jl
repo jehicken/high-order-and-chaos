@@ -32,7 +32,7 @@ Time = convert(tp, 5) # time period for simulation
 
 #-------------------------------------------------------------------------------
 # first, obtain the high-order benchmark solution 
-num_nodes = 511 #2047
+num_nodes = 1023 # 511 # <-- used for verification
 order = 8
 num_steps = 20000
 
@@ -62,8 +62,8 @@ end
 close(file) 
 
 order = [2, 4, 6]  # [2, 4, 8, 16]
-num_nodes = Array{Int}(64:16:256) - 1 #    [63, 127, 255, 511]
-num_steps = [250, 500, 750]
+num_nodes = Array{Int}(64:64:512) - 1   # [63, 127, 255, 511] #    Array{Int}(64:16:256) - 1 #    [63, 127, 255, 511]
+num_steps = [250, 500, 1000]
 
 dx = zeros(Float64, (size(order,1), size(num_nodes,1), size(num_steps,1)))
 dt = zeros(dx)

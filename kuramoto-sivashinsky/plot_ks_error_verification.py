@@ -39,18 +39,20 @@ def plotRate(p, loc, dx, ax):
 fig = plt.figure(figsize=(4,4), facecolor='w', dpi=300)
 ax = fig.add_subplot(111)
 
-data_file = open('./accuracy_ks.dat', 'r')
+data_file = open('./verify_accuracy_ks.dat', 'r')
+#data_file = open('./accuracy_ks.dat', 'r')
 data = np.loadtxt(data_file)
+offset = 8 #13 # 13 for verify_accuracy_ks.dat
 ptr = 0
-dx = data[0:13*3,:]
-ptr += 13*3
-dt = data[ptr:ptr+13*3,:]
-ptr += 13*3 
-err_avg = data[ptr:ptr+13*3,:]
-ptr += 13*3
-err_sqavg = data[ptr:ptr+13*3,:]
-ptr += 13*3
-cputime = data[ptr:ptr+13*3,:]
+dx = data[0:offset*3,:]
+ptr += offset*3
+dt = data[ptr:ptr+offset*3,:]
+ptr += offset*3
+err_avg = data[ptr:ptr+offset*3,:]
+ptr += offset*3
+err_sqavg = data[ptr:ptr+offset*3,:]
+ptr += offset*3
+cputime = data[ptr:ptr+offset*3,:]
 
 print("dx = ",dx)
 print("dt = ",dt)
@@ -58,17 +60,16 @@ print("dt = ",dt)
 marker = ["kd-", "ko-", "ks-", "k^-", "k<-"]
 handle = []
 for d in range(len(order)):
-    error = err_sqavg[d*13:(d+1)*13,-1] # error for smallest time step
-    deltax = dx[d*13:(d+1)*13,-1]
+    error = err_sqavg[d*offset:(d+1)*offset,-1] # error for smallest time step
+    deltax = dx[d*offset:(d+1)*offset,-1]
     rate = np.log(error[-1]/error[-2])/np.log(deltax[-1]/deltax[-2])
     print("maxdeg ",order[d]," rate is ",rate)
     plotRate(p=rate, loc=[deltax[-1], 0.7*error[-1]], dx=0.12, ax=ax)
     h, = ax.plot(deltax[:], error[:], marker[d], lw=1, mfc='w', ms=5, mec='k', mew=0.5)
     handle.append(h)
 
-# Tweak the appeareance of the axes
-#ax.axis([0.01, 0.5, 1e-8, 1.])  # axes ranges
-ax.axis([0.4, 3.0, 5e-5, 1.])  # axes ranges
+# Tweak the appearance of the axes
+ax.axis([0.1, 3.0, 1e-6, 1.])  # axes ranges
 ax.set_position([0.21, 0.12, 0.785, 0.855]) # position relative to figure edges
 ax.set_xlabel("$\Delta x$", fontsize=axis_fs, weight='bold', labelpad=0)
 ax.xaxis.set_label_coords(0.65, -0.09)
