@@ -53,7 +53,9 @@ The following Julia files are contained in the `kuramoto-sivashinsky` directory:
   * `kuramoto-sivashinsky.jl`: defines the functions and data structures necessary to simulate the KS PDE.
   * `solve_ks.jl`: provides an example of how to set-up and run the KS PDE problem.
   * `verify_spatial_accuracy.jl`: used to verify the spatial accuracy of the discretization, by solving over a short-time horizon and comparing against a solution on fine space and time mesh.
-  * `solve_periodic_ks.jl`: an older file that solves the KS PDE on a periodic domain.  Note used in the paper.
+  * `solve_periodic_ks.jl`: an older file that solves the KS PDE on a periodic domain.  Not used in the paper.
+  * `compute_ks_benchmark.jl`: script used to get the benchmark value for the QoI using a high-order method, on a fine mesh and with a long integration period.
+  * `chaotic_statistics_gather.jl`: the **main** script used to gather results for the KS problem that are plotted in the paper.
 
 The best place to start is `solve_ks.jl`, which illustrates the basic usage of the code in `kuramoto-sivashinsky.jl`.
 
@@ -70,6 +72,11 @@ The following plotting scripts are available:
   * `plot_ks_solution.py`: plots the space-time solution using the data file produced at the end of `solve_ks.jl`, for example.  Note this file has some hard-coded values for the file name and may need to be adapted to your situation.
   * `plot_ks_error_verification.py`: used to plot the error versus mesh spacing results from `verify_spatial_accuracy.jl`.  Again, beware of hard-coded file names and values that may need to be changed.
   * `plot_ks_cputime_verification.py`: similar to the above plot script, but plots error versus cpu time in seconds.
+  * `plot_statistics_error_vs_dx.py`: creates box plots showing the percent error in the QoI as a function of mesh spacing `dx`.  Use the `time_idx` variable to select the integration period to plot.  Specifically, `time_idx=0` is for `tau=40`, `time_idx=1` is for `tau=400` and `time_idx=2` is for `tau=4000`.
+  * `plot_statistics_error_vs_time.py`: similar to the previous script, but plots the percent error box plots versus the integration period.  Use the `dx_idx` variable to select from the five different mesh sizes.
+  * `plot_statistics_error_vs_cputime.py`: plots the median percent error from each discretization, mesh, and time-integration period versus CPU time in seconds.
+
+Note that `load_stats.py` is a utility module used by some of the scripts to load data from the text files into NumPy arrays.
 
 ## `NewtonCotes`
 
