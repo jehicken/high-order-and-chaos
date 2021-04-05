@@ -495,7 +495,7 @@ end
 Returns the space and time average of `func(sol[:,:])` using an `order` order
 accurate diagonal norm scheme.
 """
-function calcSolutionAverage(order::Int, sol::Array{T,2},
+function calcSolutionAverage(order::Int, sol::AbstractArray{T,2},
                              func::Function) where {T}
     avg = zero(T)
     quad = buildQuadrature(order, T)
@@ -509,9 +509,9 @@ function calcSolutionAverage(order::Int, sol::Array{T,2},
         end      
         for i = 1:size(sol,1)
             if i <= num_bndry
-                avg += func(sol[i,n]*wt*quad[i])
-            elseif i >= size(sol,2) - num_bndry + 1
-                avg += func(sol[i,n]*wt*quad[size(sol,2)-i+1])
+                avg += func(sol[i,n])*wt*quad[i]
+            elseif i >= size(sol,1) - num_bndry + 1
+                avg += func(sol[i,n])*wt*quad[size(sol,1)-i+1]
             else 
                 avg += func(sol[i,n])*wt
             end
