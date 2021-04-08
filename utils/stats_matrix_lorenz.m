@@ -429,6 +429,10 @@ StatsSorted_h(:,:,3) = [h     1 mean(abs(Z_GLRK4s1_032)) std(Z_GLRK4s1_032) Q2G_
                         h/2^6 50 mean(abs(Z_GLRK4s50_0005)) std(Z_GLRK4s50_0005) Q2G_50_0005-Q1G_50_0005 Q3G_50_0005-Q2G_50_0005 Q2G_50_0005;...
                         h/2^7 50 mean(abs(Z_GLRK4s50_00025)) std(Z_GLRK4s50_00025) Q2G_50_00025-Q1G_50_00025 Q3G_50_00025-Q2G_50_00025 Q2G_50_00025];
 
+                    
+% Save all the time-average data so we can export to python for plotting
+save('LorenzTimeAvgs.mat', '-regexp', 'Z_.*')
+                    
 % Clear all intermediate variables
 clearvars Z_Heuns1_004 Z_Heuns1_002 Z_Heuns1_001 Z_Heuns1_0005 Z_Heuns1_00025;
 clearvars Z_Heuns10_004 Z_Heuns10_002 Z_Heuns10_001 Z_Heuns10_0005 Z_Heuns10_00025;

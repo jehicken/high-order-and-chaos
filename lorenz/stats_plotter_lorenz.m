@@ -99,7 +99,7 @@ set(gca, 'YScale', 'log')
 ylabel("%Error Quartiles")
 xlabel("Step Size")
 xlim([0.0018 0.40])
-ylim([0.01 120])
+ylim([0.01 18])
 xticks([0.0025 0.005 0.01 0.02 0.04 0.08 0.16 0.32])
 title("% Err Stats vs Step Size, T \approx 50")
 lgd = legend("Heun's","RK4","GLRK4",'Location','southeast');

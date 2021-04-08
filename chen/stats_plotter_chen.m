@@ -67,7 +67,7 @@ xlim([0.0018 0.05])
 ylim([0.1 16])
 xticks([0.0025 0.005 0.01 0.02 0.04])
 title("% Err Stats vs Step Size, T \approx 10")
-lgd = legend("Heun's","RK4","GLRK4",'Location','southeast');
+lgd = legend("Heun's","RK4","GLRK4",'Location','northwest');
 set(findall(gcf,'-property','FontSize'),'FontSize',14)
 lgd.FontSize = 12;
 hold off
