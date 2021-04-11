@@ -5,6 +5,8 @@ Plot the error versus mesh size for the KS verification problem
 order = [2, 4, 6] #, 8]
 
 dump=False # set to True to write a png file
+dt_idx = 2 # 0 = coarsest time step, 2 = finest time step
+
 import matplotlib
 if dump:
     matplotlib.use('Agg')
@@ -36,13 +38,13 @@ def plotRate(p, loc, dx, ax):
             zorder=1)
 
 # set figure size in inches, and crete a single set of axes
-fig = plt.figure(figsize=(4,4), facecolor='w', dpi=300)
+fig = plt.figure(figsize=(3,4), facecolor='w', dpi=300)
 ax = fig.add_subplot(111)
 
 data_file = open('./verify_accuracy_ks.dat', 'r')
 #data_file = open('./accuracy_ks.dat', 'r')
 data = np.loadtxt(data_file)
-offset = 8 #13 # 13 for verify_accuracy_ks.dat
+offset = 8 # 8 meshes for verify_accuracy_ks.dat
 ptr = 0
 dx = data[0:offset*3,:]
 ptr += offset*3
@@ -57,25 +59,34 @@ cputime = data[ptr:ptr+offset*3,:]
 print("dx = ",dx)
 print("dt = ",dt)
 
-marker = ["kd-", "ko-", "ks-", "k^-", "k<-"]
-handle = []
+colors = ['lightskyblue', 'cornflowerblue', 'navy']
+style = [':o', '--s', '-d']
+lw = [2.0, 1.5, 1.0]
+ms = [6, 5, 4]
+line_h = []
+
 for d in range(len(order)):
-    error = err_sqavg[d*offset:(d+1)*offset,-1] # error for smallest time step
+    error = err_sqavg[d*offset:(d+1)*offset,dt_idx] # error for smallest time step
     deltax = dx[d*offset:(d+1)*offset,-1]
     rate = np.log(error[-1]/error[-2])/np.log(deltax[-1]/deltax[-2])
     print("maxdeg ",order[d]," rate is ",rate)
-    plotRate(p=rate, loc=[deltax[-1], 0.7*error[-1]], dx=0.12, ax=ax)
-    h, = ax.plot(deltax[:], error[:], marker[d], lw=1, mfc='w', ms=5, mec='k', mew=0.5)
-    handle.append(h)
+    plotRate(p=rate, loc=[deltax[-1], 0.7*error[-1]], dx=0.1, ax=ax)
+    h, = ax.plot(deltax[:], error[:], style[d], lw=lw[d], color=colors[d],
+                 ms=ms[d])
+    line_h.append(h)
 
 # Tweak the appearance of the axes
-ax.axis([0.1, 3.0, 1e-6, 1.])  # axes ranges
-ax.set_position([0.21, 0.12, 0.785, 0.855]) # position relative to figure edges
+ax.axis([0.2, 3.0, 1e-6, 1.])  # axes ranges
+ax.set_position([0.26, 0.12, 0.735, 0.855]) # position relative to figure edges
+#ax.set_position([0.21, 0.12, 0.785, 0.855]) # position relative to figure edges
 ax.set_xlabel("$\Delta x$", fontsize=axis_fs, weight='bold', labelpad=0)
-ax.xaxis.set_label_coords(0.65, -0.09)
+ax.xaxis.set_label_coords(0.4, -0.08)
+#ax.xaxis.set_label_coords(0.65, -0.09)
 #ax.set_ylabel("$L^2$ Error", fontsize=axis_fs, weight='normal', rotation=90)
 ax.set_ylabel("Functional Error", fontsize=axis_fs, weight='normal', rotation=90)
-ax.yaxis.set_label_coords(-0.18, 0.5)
+ax.yaxis.set_label_coords(-0.23, 0.5)
+#ax.yaxis.set_label_coords(-0.18, 0.5)
+
 ax.set_yscale('log')
 ax.set_xscale('log') #, subsx=[])
 for axis in ['top','bottom','left','right']:
@@ -119,8 +130,8 @@ for d in order:
         leglabels.append(str(d)+"nd order")
     else:
         leglabels.append(str(d)+"th order")
-leg = ax.legend(handle, leglabels,
-                loc=(0.60,0.05), numpoints=1, borderpad=0.5, \
+leg = ax.legend(line_h, leglabels,
+                loc="lower right", numpoints=1, borderpad=0.5, \
                 handlelength=1)
 rect = leg.get_frame()
 rect.set_linewidth(axis_lw)
