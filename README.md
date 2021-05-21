@@ -1,13 +1,11 @@
-# Julia code for Paper
+# Julia and Python code for "The relative efficiency of high-order discretizations of chaotic dynamical systems"
 
-(Kevin: We may cite this repo eventually, so let's keep it as neat and tidy as possible)
-
-This repository contains the code necessary to reproduce the results in XXXX.  The directories are as follows:
+This repository contains the code necessary to reproduce the results in the manuscript _"The relative efficiency of high-order discretizations of chaotic dynamical systems"_.  The directories are as follows:
  
   * `lorenz`: Julia code and plotting scripts for the Lorenz results.
-  * `chen`: Julia code and plotting scripts for the Chen system.
+  * `chen`: Julia code and plotting scripts for the Chen system (not included in the current manuscript)
   * `kuramoto-sivashinsky`: Julia code and plotting scripts for the KS PDE.
-  * `NewtonCotes`: A variety of Newton-Cotes rules for numerical integration
+  * `NewtonCotes`: A variety of Newton-Cotes rules for numerical integration.
   * `utils`: MATLAB helper functions for importing data, calculating time averages, and gathering statistics
 
 The following sections describe the contents of these directories in more detail.
@@ -16,13 +14,23 @@ The following sections describe the contents of these directories in more detail
 
 The Lorenz'63 system is originally presented by [Lorenz](https://doi.org/10.1175/1520-0469(1963)020<0130:DNF>2.0.CO;2) and in this study we use the classic parameter choices leading to the chaotic solutions on the Lorenz attractor: rho = 28, sigma = 10, beta = 8/3. 
 
-### lorenz Julia files
+### `lorenz` Julia files
 
 The following Julia files are contained in the `lorenz` directory:
 
-  * `lorenz.jl`: includes all code needed to simulate the Lorenz system and recreate results from the paper. It includes the time-average calculation on the reference dataset from [Kehlet and Logg](arXiv:1306.2782), plots used for spin-up period/initial condition determination, code for step size error determination, as well as code for time-marching all solutions at a range of step sizes and exporting the results.
+  * `statistics_gather.jl`: main script used to solve the Lorenz system for various step sizes and integration periods.  Results are stored in files of the form `raw_statistics_lorenz_orderX.dat`, where `X` denotes orders 2, 4, or 8.  
+  * `lorenz.jl`: Includes the time-average calculation on the reference dataset from [Kehlet and Logg](arXiv:1306.2782) and code for step size error determination.  Also includes code to run simulations for gathering statistics for an earlier version of the paper.
 
-### lorenz MATLAB data analysis and plotting scripts
+### `lorenz` Python plotting scripts
+
+The following plotting scripts are available:
+
+  * `plot_statistics_error_vs_dt.py`: creates box plots showing the percent error in the QoI as a function of step size `dt` (referred to as `h` in the paper).  Use the `time_idx` variable to select the integration period to plot.  Specifically, `time_idx=0` is for `tau=1`, `time_idx=1` is for `tau=10` and `time_idx=2` is for `tau=100`.
+  * `plot_statistics_error_vs_time.py`: similar to the previous script, but plots the percent error box plots versus the integration period.  Use the `dt_idx` variable to select from the five different time step sizes.
+
+Note that `load_lorenz_stats.py` is a utility module used by some of the scripts to load data from the text files into NumPy arrays.
+
+### lorenz MATLAB data analysis and plotting scripts (deprecated)
 
   * `runner.m`: helper script which imports all data produced by `lorenz.jl`, performs time-averaging on that data using the functions in `utils` and `NewtonCotes`, and gathers all time-average statistics for each combination of solver method, step size, and integration period.
   * `stats_plotter_lorenz.m`: contains all code needed to produce plots of time-average error statistics when step size is held constant and integration period is varied, as well as when integration period is held constant and step size is varied.
