@@ -1,7 +1,5 @@
 # Julia code for Paper
 
-(Kevin: We may cite this repo eventually, so let's keep it as neat and tidy as possible)
-
 This repository contains the code necessary to reproduce the results in XXXX.  The directories are as follows:
  
   * `lorenz`: Julia code and plotting scripts for the Lorenz results.
