@@ -4,7 +4,7 @@ Plot the error versus mesh size for the KS verification problem
 
 order = [2, 4, 6] #, 8]
 
-dump=False # set to True to write a png file
+dump=True # set to True to write a png file
 dt_idx = 2 # 0 = coarsest time step, 2 = finest time step
 
 import matplotlib

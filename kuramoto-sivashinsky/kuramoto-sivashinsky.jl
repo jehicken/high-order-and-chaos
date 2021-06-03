@@ -1,19 +1,27 @@
 module kuramoto_sivashinsky
 
-"""
-    B = bernoulli(n)
+using SparseArrays 
+using LinearAlgebra
 
-Return the `n`th Bernoulli number.
 """
-function bernoulli(n)
-    B = Array{Rational{BigInt}}(n + 1)
+    B = calcBernoulli(n)
+
+Return the `n`th Bernoulli number.  Follows the convention that `n=1` 
+Bernoulli number is equal to -1/2.
+"""
+function calcBernoulli(n)
+    A = Vector{Rational{BigInt}}(undef, n + 1)
     for m = 0:n
-        B[m+1] = 1 // (m+1)
+        A[m + 1] = 1 // (m + 1)
         for j = m:-1:1
-            B[j] = j*(B[j] - B[j+1])
+            A[j] = j * (A[j] - A[j + 1])
         end
     end
-    return B[1]
+    if n == 1
+        return -A[1]
+    else
+        return A[1]
+    end
 end
 
 """
@@ -21,20 +29,32 @@ end
 
 Return a Gregory-type quadrture rule for uniformly spaced data. 
 """
-function buildQuadrature(order::Int, T::Type=Float64)
-    if order <= 2
-        quad = [1//2]
-    elseif order <= 4 
-        quad = [17//48; 59//48; 43//48; 49//48]
-    elseif order <= 6 
-        quad = [13649//43200; 12013//8640; 2711//4320; 5359//4320; 7877//8640;
-                43801//43200]
-    else
-        quad = [1498139//5080320; 1107307//725760; 20761//80640;
-                1304999//725760; 299527//725760; 103097//80640;
-                670091//725760; 5127739//5080320]
+function buildQuadrature(order::Int)
+    # Form the linear system to solve
+    numbnd = order - 1
+    A = zeros(Rational{BigInt}, order-1, numbnd)
+    b = zeros(Rational{BigInt}, order-1)
+    for j = 1:order-1
+        for i = 1:numbnd 
+            A[j,i] = j*(numbnd - (i-1))^(j-1)
+        end
+        b[j] = numbnd^j - ((-1)^j)*calcBernoulli(j)
     end
-    return convert(Array{T,1}, quad)
+    w = A\b
+    return w
+    # if order <= 2
+    #     quad = [1//2]
+    # elseif order <= 4 
+    #     quad = [17//48; 59//48; 43//48; 49//48]
+    # elseif order <= 6 
+    #     quad = [13649//43200; 12013//8640; 2711//4320; 5359//4320; 7877//8640;
+    #             43801//43200]
+    # else
+    #     quad = [1498139//5080320; 1107307//725760; 20761//80640;
+    #             1304999//725760; 299527//725760; 103097//80640;
+    #             670091//725760; 5127739//5080320]
+    # end
+    # return convert(Array{T,1}, quad)
 end
 
 """
@@ -116,7 +136,7 @@ function buildGhostOp(order::Int, T::Type=Float64)
     B = zeros(T, 2, num_bndry)
     #B[1,:] = interp.coeffs[num_ghost:end]
     B[2,:] = fd.coeffs[num_ghost+1:end]
-    return num_ghost, num_bndry, -A.'*( (A*A.') \ B )
+    return num_ghost, num_bndry, -A'*( (A*A') \ B )
     
     if false
         # This version uses a TVD-type regularization
@@ -139,7 +159,7 @@ function buildGhostOp(order::Int, T::Type=Float64)
         D += diagm(2*ones(T,num_ghost))
         D -= diagm(ones(T, num_ghost-1), 1)
         D -= diagm(ones(T, num_ghost-1), -1)
-        K = [D A.'; A zeros(T, 2, 2)]
+        K = [D A'; A zeros(T, 2, 2)]
         G = -inv(K)[1:num_ghost,end-1:end]*B 
         return num_ghost, num_bndry, G
     end
@@ -179,13 +199,13 @@ function buildKSDataPeriodic(order::Int, num_nodes::Int, T::Type=Float64)
     fd = buildFiniteDifference(2, order, T)
     fac = 1/(h*h)
     for i = 1:num_nodes
-        A[i, mod.(fd.stencil + i - 1, num_nodes) + 1] -= fd.coeffs*fac 
+        A[i, mod.(fd.stencil .+ i .- 1, num_nodes) + 1] -= fd.coeffs*fac 
     end
     # finally, add the BiLaplacian terms 
     fd = buildFiniteDifference(4, order, T)
     fac *= fac
     for i = 1:num_nodes
-        A[i, mod.(fd.stencil + i - 1, num_nodes) + 1] -= fd.coeffs*fac 
+        A[i, mod.(fd.stencil .+ i .- 1, num_nodes) + 1] -= fd.coeffs*fac 
     end
     Asparse = sparse(A)
     # finally, get the first-derivative operator for nonlinear terms 
@@ -267,14 +287,14 @@ function buildKSData(order::Int, num_nodes::Int, T::Type=Float64)
     for i = 1:num_nodes
         idx = [k for k = 1:size(fd.stencil,1) 
                if fd.stencil[k] + i >= 1 && fd.stencil[k] + i <= num_nodes]
-        A[i, fd.stencil[idx] + i] -= fd.coeffs[idx]*fac 
+        A[i, fd.stencil[idx] .+ i] -= fd.coeffs[idx]*fac 
     end
 
     # eliminate ghost node contributions for Laplacian
     Ag = zeros(T, num_bndry, num_ghost)
     for i = 1:num_bndry
         idx = [k for k = 1:size(fd.stencil,1) if fd.stencil[k] + i < 1]
-        Ag[i, fd.stencil[idx] + num_ghost + i] -= fd.coeffs[idx]*fac
+        Ag[i, fd.stencil[idx] .+ num_ghost .+ i] -= fd.coeffs[idx]*fac
     end
     # println("Ag (Laplacian) = ", Ag)
     G = Ag*Bg 
@@ -287,14 +307,14 @@ function buildKSData(order::Int, num_nodes::Int, T::Type=Float64)
     for i = 1:num_nodes
         idx = [k for k = 1:size(fd.stencil,1) 
                if fd.stencil[k] + i >= 1 && fd.stencil[k] + i <= num_nodes]
-        A[i, fd.stencil[idx] + i] -= fd.coeffs[idx]*fac 
+        A[i, fd.stencil[idx] .+ i] -= fd.coeffs[idx]*fac 
     end
 
     # eliminate ghost node contributions for BiLaplacian
     fill!(Ag, zero(T))
     for i = 1:num_bndry
         idx = [k for k = 1:size(fd.stencil,1) if fd.stencil[k] + i < 1]
-        Ag[i, fd.stencil[idx] + num_ghost + i] -= fd.coeffs[idx]*fac
+        Ag[i, fd.stencil[idx] .+ num_ghost .+ i] -= fd.coeffs[idx]*fac
     end
     # println("Ag (BiLaplacian) = ", Ag)
     G = Ag*Bg
@@ -313,9 +333,9 @@ function buildKSData(order::Int, num_nodes::Int, T::Type=Float64)
     G = zeros(T, num_bndry, div(size(fd.stencil,1)+1,2) + num_bndry - 1 )
     for i = 1:num_bndry
         idx = [k for k = 1:size(fd.stencil,1) if fd.stencil[k] + i < 1]
-        Ag[i, fd.stencil[idx] + num_ghost + i] += fd.coeffs[idx]
+        Ag[i, fd.stencil[idx] .+ num_ghost .+ i] += fd.coeffs[idx]
         idx = [k for k = 1:size(fd.stencil,1) if fd.stencil[k] + i >= 1]
-        G[i, fd.stencil[idx] + i] += fd.coeffs[idx]
+        G[i, fd.stencil[idx] .+ i] += fd.coeffs[idx]
     end
     # println("Ag (first-derivative) = ", Ag)
     # println("G before = ",G)
@@ -453,11 +473,11 @@ function solveUsingMidpoint(ks::KSData{T}, Time::T, num_steps::Int,
     sol[2:end-1,1] = u
     
     t = convert(T, 0.0)
-    Jac = zeros(ks.linear_op)
-    A = zeros(ks.linear_op)
-    u_mid = zeros(u)
-    u_old = zeros(u)
-    r = zeros(u)
+    Jac = similar(ks.linear_op)
+    F = lu(ks.linear_op) # initialize memory for the lu factorization
+    u_mid = zeros(size(u))
+    u_old = zeros(size(u))
+    r = zeros(size(u))
     newt_tol = 1e-10 # We will need to ensure this is sufficiently small
     max_newt_iter = 50
     for n = 1:num_steps
@@ -479,9 +499,10 @@ function solveUsingMidpoint(ks::KSData{T}, Time::T, num_steps::Int,
             end 
             kuramoto_sivashinsky.getKSJac!(ks, t, u_mid, Jac)
             Jac *= 0.5*dt 
-            Jac -= speye(T, num_nodes)
-            du = Jac\r
-            u += du
+            Jac -= I #speye(T, num_nodes)            
+            lu!(F, Jac) 
+            du = F\r 
+            u += du 
         end
         t += dt
         sol[2:end-1,n+1] = u
@@ -498,7 +519,7 @@ accurate diagonal norm scheme.
 function calcSolutionAverage(order::Int, sol::AbstractArray{T,2},
                              func::Function) where {T}
     avg = zero(T)
-    quad = buildQuadrature(order, T)
+    quad = convert(Vector{T}, buildQuadrature(order))
     num_bndry = size(quad,1)
     for n = 1:size(sol,2)
         wt = one(T) 

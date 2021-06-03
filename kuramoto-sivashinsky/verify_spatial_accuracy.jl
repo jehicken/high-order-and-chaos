@@ -1,7 +1,7 @@
 # Solve the KS equation over a short period, then check against high-order solution 
 
 include("kuramoto-sivashinsky.jl")
-using kuramoto_sivashinsky
+using .kuramoto_sivashinsky
 
 # define integrand functions needed for time averages 
 function ident(val) 
@@ -62,14 +62,14 @@ end
 close(file) 
 
 order = [2, 4, 6]  # [2, 4, 8, 16]
-num_nodes = Array{Int}(64:64:512) - 1   # [63, 127, 255, 511] #    Array{Int}(64:16:256) - 1 #    [63, 127, 255, 511]
+num_nodes = Array{Int}(64:64:512) .- 1   # [63, 127, 255, 511] #    Array{Int}(64:16:256) - 1 #    [63, 127, 255, 511]
 num_steps = [250, 500, 1000]
 
 dx = zeros(Float64, (size(order,1), size(num_nodes,1), size(num_steps,1)))
-dt = zeros(dx)
-err_avg = zeros(dx)
-err_sqavg = zeros(dx)
-cputime = zeros(dx)
+dt = zeros(size(dx))
+err_avg = zeros(size(dx))
+err_sqavg = zeros(size(dx))
+cputime = zeros(size(dx))
 
 for k = 1:size(num_steps,1)
     for n = 1:size(num_nodes,1)
@@ -77,15 +77,15 @@ for k = 1:size(num_steps,1)
              # set initial condition and set-up the KSData structure 
             dx[p,n,k] = Lx/(num_nodes[n]+1)
             dt[p,n,k] = Time/num_steps[k]
-            x = Array{tp}(dx[p,n,k]:dx[p,n,k]:Lx-dx[p,n,k])
+            local x = Array{tp}(dx[p,n,k]:dx[p,n,k]:Lx-dx[p,n,k])
             #u = sin.(8*pi*x/128).^2
-            u = exp.(x/128).*sin.(16*pi*x/128).^2
-            ks = kuramoto_sivashinsky.buildKSData(order[p], num_nodes[n], tp)
-            # solve the problem and get the time averages 
-            tic()
-            sol = kuramoto_sivashinsky.solveUsingMidpoint(ks, Time,
-                                                          num_steps[k], u)
-            cputime[p,n,k] = toc()
+            local u = exp.(x/128).*sin.(16*pi*x/128).^2
+            local ks = kuramoto_sivashinsky.buildKSData(order[p], num_nodes[n], tp)
+            # solve the problem and get the time averages
+            cputime[p,n,k] = @elapsed begin
+                local sol = kuramoto_sivashinsky.solveUsingMidpoint(ks, Time,
+                                                              num_steps[k], u)
+            end
             u_avg = kuramoto_sivashinsky.calcSolutionAverage(order[p], sol,
                                                              ident)
             u2_avg = kuramoto_sivashinsky.calcSolutionAverage(order[p], sol,

@@ -3,8 +3,8 @@ Plot the estimated error in z_avg versus the integration period
 """
 
 dump=True # set to True to write a png file
-legend=False # include the legend on the plot
-ref_line=True
+legend=True # include the legend on the plot
+ref_line=False
 
 import matplotlib
 from load_lorenz_stats import load_time_stats, z_avg_ref
@@ -39,7 +39,7 @@ ax = fig.add_subplot(111)
 num_step_sizes = 5 # number of time step sizes considered 
 time = np.array([1.0, 10.0, 100.0])
 num_times = time.size # number of time periods considered 
-dt_idx = 4 # dx mesh size to load from [0,1,...,num_step_sizes-1]
+dt_idx = 1 # dt mesh size to load from [0,1,...,num_step_sizes-1]
 
 # The following lists define files and characteristics unique to each plot
 data_files = ["statistics_lorenz_order2.dat", "statistics_lorenz_order4.dat", 
@@ -50,6 +50,9 @@ width_fac = [0.9, 0.45, 0.225]
 box_h = []
 
 for i, file in enumerate(data_files):
+    if dt_idx == 0 and i == 0:
+        # skip the second-order method on the coarsest mesh: it is unstable
+        continue
     dt, z_avg, cputime = load_time_stats(file, num_step_sizes, num_times, 
                                          dt_idx)
     z_avg_error = np.abs(z_avg - z_avg_ref)*100/z_avg_ref

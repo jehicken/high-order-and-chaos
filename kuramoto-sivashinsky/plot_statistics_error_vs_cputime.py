@@ -53,13 +53,13 @@ for i, file in enumerate(data_files):
 # format the plot 
 ax.set_xscale('log')
 ax.set_yscale('log')
-ax.axis([1, 1000, 1e-1, 100])
+ax.axis([0.5, 500, 1e-1, 100])
 ax.set_position([0.12, 0.15, 0.86, 0.815]) # position relative to figure edges
 ax.yaxis.grid(color='gray', linestyle='--', linewidth=0.5)
 ax.set_xticklabels([], minor=True)
 ax.set_axisbelow(True) # grid lines are plotted below
 ax.set_xlabel("CPU Time ($s$)", fontsize=axis_fs, weight='normal', labelpad=0)
-ax.xaxis.set_label_coords(0.5, -0.11)
+ax.xaxis.set_label_coords(0.6, -0.11)
 ax.set_ylabel("Percent Error", fontsize=axis_fs, weight='normal', rotation=90)
 ax.yaxis.set_label_coords(-0.1, 0.5)
 
@@ -89,22 +89,22 @@ leg.set_zorder(101)
 
 
 # indicate the time-integration period for each data set
-ax.annotate("", xy=(1.2, 40), xycoords='data',
-            xytext=(6, 40), textcoords='data',
+ax.annotate("", xy=(0.8, 40), xycoords='data',
+            xytext=(4, 40), textcoords='data',
             arrowprops=dict(arrowstyle="|-|",))
-ax.text(2.7, 40, r"$\tau=40$", ha="center", va="center", size=label_fs,
+ax.text(1.8, 40, r"$\tau=40$", ha="center", va="center", size=label_fs,
     bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="k", lw=1))
 
-ax.annotate("", xy=(12, 40), xycoords='data',
-            xytext=(60, 40), textcoords='data',
+ax.annotate("", xy=(8, 40), xycoords='data',
+            xytext=(40, 40), textcoords='data',
             arrowprops=dict(arrowstyle="|-|",))
-ax.text(27, 40, r"$\tau=400$", ha="center", va="center", size=label_fs,
+ax.text(18, 40, r"$\tau=400$", ha="center", va="center", size=label_fs,
     bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="k", lw=1))
 
-ax.annotate("", xy=(120, 40), xycoords='data',
-            xytext=(600, 40), textcoords='data',
+ax.annotate("", xy=(80, 40), xycoords='data',
+            xytext=(400, 40), textcoords='data',
             arrowprops=dict(arrowstyle="|-|",))
-ax.text(270, 40, r"$\tau=4000$", ha="center", va="center", size=label_fs,
+ax.text(180, 40, r"$\tau=4000$", ha="center", va="center", size=label_fs,
     bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="k", lw=1))
 
 

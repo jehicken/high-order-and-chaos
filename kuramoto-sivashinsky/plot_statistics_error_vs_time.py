@@ -4,7 +4,7 @@ Plot the estimated error versus the integration period
 
 dump=True # set to True to write a png file
 legend=False # include the legend on the plot
-ref_line=True
+ref_line=False
 
 import matplotlib
 from load_stats import load_time_stats, u_avg_ref, u2_avg_ref
@@ -44,7 +44,7 @@ ax = fig.add_subplot(111)
 num_meshes = 5 # number of mesh sizes considered 
 time = np.array([40.0, 400.0, 4000.0])
 num_times = time.size # number of time periods considered 
-dx_idx = 4 # dx mesh size to load from [0,1,...,num_meshes-1]
+dx_idx = 0 # dx mesh size to load from [0,1,...,num_meshes-1]
 
 # The following lists define files and characteristics unique to each plot
 data_files = ["statistics_ks_order2.dat", "statistics_ks_order4.dat", 
@@ -76,7 +76,7 @@ if ref_line:
 # format the plot 
 ax.set_xscale('log')
 ax.set_yscale('log')
-ax.axis([10, 8000, 1e-3, 100])
+ax.axis([10, 8000, 3e-4, 50])
 ax.set_position([0.26, 0.12, 0.735, 0.855]) # position relative to figure edges
 ax.yaxis.grid(color='gray', linestyle='--', linewidth=0.5)
 plt.xticks(ticks=[40.0, 400.0, 4000.0], labels=[40, 400, 4000])

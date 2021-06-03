@@ -1,6 +1,6 @@
 # This script runs the KS PDE over ensembles to estimate the time-averaged QoI
 include("kuramoto-sivashinsky.jl")
-using kuramoto_sivashinsky
+using .kuramoto_sivashinsky
 
 # define integrand functions needed for time averages 
 function ident(val) 
@@ -21,7 +21,7 @@ Time = convert(tp, 1000) # statistics gathering period for simulation
 num_spin = convert(Int, Spin/dt)
 num_steps = convert(Int, Time/dt)
 Lx = convert(tp, 128)    # domain size 
-order = 6                # order of accuracy 
+order = 8                # order of accuracy 
 num_samples = 10         # number of ensemble samples to use
 num_part = 10            # number of partitions that time is broken into
 dx = Lx/(num_nodes+1)
@@ -32,7 +32,7 @@ u_avg_vals = zeros(num_samples)
 u2_avg_vals = zeros(num_samples)
 for n = 1:num_samples 
     # set initial condition and set-up the KSData structure 
-    u = 2*rand(num_nodes) - 1
+    u = 2*rand(num_nodes) .- 1
     ks = kuramoto_sivashinsky.buildKSData(order, num_nodes, tp)
 
     # spin simulation
@@ -42,11 +42,13 @@ for n = 1:num_samples
     for p = 1:num_part
         # to avoid running out of memory, we partition the total time 
         u = sol[2:end-1,end]
-        clear!(:sol)
+        #clear!(:sol)
+        sol = nothing
         println("Starting statistics gathering simulation #",p)
-        tic()
-        sol = kuramoto_sivashinsky.solveUsingMidpoint(ks, Time, num_steps, u)
-        cputime = toc()
+        cputime = @elapsed begin
+            sol = kuramoto_sivashinsky.solveUsingMidpoint(ks, Time, 
+                                                          num_steps, u)
+        end
         u_avg_vals[n] += kuramoto_sivashinsky.
             calcSolutionAverage(order, sol, ident)
         u2_avg_vals[n] += kuramoto_sivashinsky.

@@ -25,10 +25,11 @@ label_fs = 10 # axis labels' font size
 fig = plt.figure(figsize=(3,4), facecolor='w', dpi=300)
 ax = fig.add_subplot(111)
 
-num_step_sizes = 5 # number of dt step sizes considered 
+step_sizes = np.array([0.1, 0.05, 0.025, 0.0125, 0.00625])
+num_step_sizes = step_sizes.size # number of dt step sizes considered 
 time = np.array([1.0, 10.0, 100.0])
 num_times = time.size # number of time periods considered 
-time_idx = 1 # time period to load from [0,1,...,num_times-1]
+time_idx = 0 # time period to load from [0,1,...,num_times-1]
 
 # The following lists define files and characteristics unique to each plot
 data_files = ["statistics_lorenz_order2.dat", "statistics_lorenz_order4.dat", 
@@ -53,6 +54,17 @@ for i, file in enumerate(data_files):
                capprops=dict(color=colors[i]),
                whiskerprops=dict(color=colors[i]), 
                boxprops=dict(color=colors[i], facecolor='w', linewidth=lw[i]))
+    for j in range(z_avg.shape[1]):
+        if i == 0:
+            print("order ",2**(i+1),": step ",step_sizes[j+1],": mean error = ",
+                  np.mean(z_avg_error[:,j]))
+            print("order ",2**(i+1),": step ",step_sizes[j+1],": std. error = ",
+                  np.std(z_avg_error[:,j]))
+        else: 
+            print("order ",2**(i+1),": step ",step_sizes[j],": mean error = ",
+                  np.mean(z_avg_error[:,j]))
+            print("order ",2**(i+1),": step ",step_sizes[j],": std. error = ",
+                  np.std(z_avg_error[:,j]))
     box_h.append(bh)
 
 # format the plot 
@@ -68,7 +80,7 @@ ax.tick_params(axis='x', pad=0)
 #plt.xticks(ticks=[], minor=True)
 ax.set_xticks([], minor=True)
 ax.set_axisbelow(True) # grid lines are plotted below
-ax.set_xlabel("$h$", fontsize=axis_fs, weight='bold', labelpad=0)
+ax.set_xlabel("$\Delta t$", fontsize=axis_fs, weight='bold', labelpad=0)
 ax.xaxis.set_label_coords(0.55, -0.19)
 #ax.set_ylabel("$L^2$ Error", fontsize=axis_fs, weight='normal', rotation=90)
 ax.set_ylabel("Percent Error", fontsize=axis_fs, weight='normal', rotation=90)

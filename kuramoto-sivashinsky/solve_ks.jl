@@ -1,6 +1,6 @@
 # solve the KS function and store data for plotting 
 include("kuramoto-sivashinsky.jl")
-using kuramoto_sivashinsky
+using .kuramoto_sivashinsky
 
 # define integrand functions needed for time averages 
 function ident(val) 
@@ -27,7 +27,7 @@ num_steps = convert(Int, Time/dt)
 dx = Lx/(num_nodes+1)
 x = Array{tp}(dx:dx:Lx-dx)
 #u = exp.(-((x-64).^2)./512)
-u = 2*rand(num_nodes) - 1
+u = 2*rand(num_nodes) .- 1
 ks = kuramoto_sivashinsky.buildKSData(order, num_nodes, tp)
 
 # solve the problem and get the time averages
@@ -35,9 +35,7 @@ println("Starting spin-up portion of simulation")
 sol = kuramoto_sivashinsky.solveUsingMidpoint(ks, Spin, num_spin, u)
 u = sol[2:end-1,end]
 println("Starting statistics gathering simulation")
-tic()
-sol = kuramoto_sivashinsky.solveUsingMidpoint(ks, Time, num_steps, u)
-cputime = toc()
+@elapsed sol = kuramoto_sivashinsky.solveUsingMidpoint(ks, Time, num_steps, u)
 u_avg_ref = kuramoto_sivashinsky.calcSolutionAverage(order, sol, ident)
 u2_avg_ref = kuramoto_sivashinsky.calcSolutionAverage(order, sol, square)
 println("u averaged = ", u_avg_ref)

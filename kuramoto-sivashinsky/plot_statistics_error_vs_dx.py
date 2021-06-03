@@ -2,7 +2,7 @@
 Plot the estimated error versus the mesh size
 """
 
-dump=False # set to True to write a png file
+dump=True # set to True to write a png file
 legend=False # include the legend on the plot
 
 import matplotlib
@@ -28,7 +28,7 @@ ax = fig.add_subplot(111)
 num_meshes = 5 # number of mesh sizes considered 
 time = np.array([40.0, 400.0, 4000.0])
 num_times = time.size # number of time periods considered 
-time_idx = 2 #num_times - 1 # time period to load from [0,1,...,num_times-1]
+time_idx = 0 #num_times - 1 # time period to load from [0,1,...,num_times-1]
 
 # The following lists define files and characteristics unique to each plot
 data_files = ["statistics_ks_order2.dat", "statistics_ks_order4.dat", 
@@ -54,7 +54,7 @@ for i, file in enumerate(data_files):
 # format the plot 
 ax.set_xscale('log')
 ax.set_yscale('log')
-ax.axis([0.45, 1.1, 1e-3, 100])
+ax.axis([0.45, 1.1, 3e-4, 50])
 ax.set_position([0.26, 0.12, 0.735, 0.855]) # position relative to figure edges
 ax.yaxis.grid(color='gray', linestyle='--', linewidth=0.5)
 plt.xticks(ticks=[0.5, 1.0], labels=[0.5, 1.0])
